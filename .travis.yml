@@ -1,0 +1,27 @@
+---
+language: python
+python: "3.7"
+
+sudo: required
+
+services:
+  - docker
+
+addons:
+  apt:
+    packages:
+    - python-pip
+
+
+install:
+  - pip install ansible
+  - ansible --version
+  - git clone https://github.com/IvanRezv/gitlab-runner-binary-ansible-role.git
+
+script:
+  - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+  - echo "vault_passwd" > vault_passwd
+  - ansible-playbook --vault-password-file=vault_passwd -K -i tests/inventory tests/test.yml
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
